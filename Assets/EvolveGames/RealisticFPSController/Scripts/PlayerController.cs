@@ -10,7 +10,6 @@ namespace EvolveGames
     {
         [Header("PlayerController")]
         [SerializeField] public Transform Camera;
-        [SerializeField] public ItemChange Items;
         [SerializeField, Range(1, 10)] float walkingSpeed = 3.0f;
         [Range(0.1f, 5)] public float CroughSpeed = 1.0f;
         [SerializeField, Range(2, 20)] float RuningSpeed = 4.0f;
@@ -26,6 +25,9 @@ namespace EvolveGames
         [SerializeField] float timeToRunning = 2.0f;
         [HideInInspector] public bool canMove = true;
         [HideInInspector] public bool CanRunning = true;
+        [Space(20)]
+        [Header("State")]
+        public float hp = 100f;
 
         [Space(20)]
         [Header("Climbing")]
@@ -62,10 +64,12 @@ namespace EvolveGames
         float installGravity;
         bool WallDistance;
         [HideInInspector] public float WalkingValue;
+        [HideInInspector] public bool isEnemyInTrigger = false;
+
+
         void Start()
         {
             characterController = GetComponent<CharacterController>();
-            if (Items == null && GetComponent<ItemChange>()) Items = GetComponent<ItemChange>();
             cam = GetComponentInChildren<Camera>();
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -143,22 +147,22 @@ namespace EvolveGames
             if(WallDistance != Physics.Raycast(GetComponentInChildren<Camera>().transform.position, transform.TransformDirection(Vector3.forward), out ObjectCheck, HideDistance, LayerMaskInt) && CanHideDistanceWall)
             {
                 WallDistance = Physics.Raycast(GetComponentInChildren<Camera>().transform.position, transform.TransformDirection(Vector3.forward), out ObjectCheck, HideDistance, LayerMaskInt);
-                Items.ani.SetBool("Hide", WallDistance);
-                Items.DefiniteHide = WallDistance;
             }
+        }
+
+        public void PlayerOnDamaged(float damage)
+        {
+            hp -= damage;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            
+            if (other.gameObject.CompareTag("Enemy")) isEnemyInTrigger = true;
         }
-        private void OnTriggerStay(Collider other)
-        {
-
-        }
+       
         private void OnTriggerExit(Collider other)
         {
-            
+            if (other.gameObject.CompareTag("Enemy")) isEnemyInTrigger = false;
         }
 
     }

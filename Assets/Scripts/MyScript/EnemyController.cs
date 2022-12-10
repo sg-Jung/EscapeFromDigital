@@ -1,3 +1,4 @@
+using EvolveGames;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,13 +12,18 @@ public class EnemyController : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] float enemyHP = 100f;
     [SerializeField] float moveSpeed = 5f;
-    [SerializeField] Transform target;
+    [SerializeField] float rotateSpeed = 8f;
+    [SerializeField] float attackDamage = 10f;
+    [SerializeField] PlayerController target;
     [Header("Sound")]
     [SerializeField] AudioClip idleClip;
     [SerializeField] AudioClip damagedClip;
     [SerializeField] AudioClip dieClip;
+    [SerializeField] AudioClip attackClip;
     bool isStop = false;
     bool isDie = false;
+    bool isAttack = false;
+    bool onPlayer = false;
 
     void Start()
     {
@@ -32,7 +38,8 @@ public class EnemyController : MonoBehaviour
     {
         if (!isStop && !isDie && enemyHP > 0)
         {
-            agent.destination = target.position;
+            agent.destination = target.transform.position;
+            OnHitPlayer();
         }
     }
 
@@ -64,6 +71,49 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    void OnHitPlayer()
+    {
+        if(agent.remainingDistance <= agent.stoppingDistance + 0.5)
+        {
+            RotateToPlayer();
+            Attack();
+        }
+    }
+
+    void RotateToPlayer()
+    {
+        Vector3 to = new Vector3(target.transform.position.x, 0, target.transform.position.z);
+        Vector3 from = new Vector3(agent.transform.position.x, 0, agent.transform.position.z);
+        Quaternion rot = Quaternion.LookRotation(to - from);
+
+        agent.transform.rotation = Quaternion.Slerp(agent.transform.rotation, rot, Time.deltaTime * rotateSpeed);
+    }
+
+    void Attack()
+    {
+        if (!onPlayer) return;
+
+        isAttack = true;
+        SetAgentState(true);
+
+        anim.SetBool("isAttack", true);
+        StartCoroutine(nameof(OnAttackCor));
+    }
+
+    IEnumerator OnAttackCor()
+    {
+        PlaySound(attackClip);
+
+        yield return new WaitForSeconds(1f);
+
+        if (target.isEnemyInTrigger) target.PlayerOnDamaged(attackDamage);
+
+        yield return new WaitForSeconds(0.5f);
+        anim.SetBool("isAttack", false);
+        SetAgentState(false);
+        isAttack = false;
+    }
+
     IEnumerator OnDamageCor()
     {
         PlaySound(damagedClip);
@@ -93,5 +143,15 @@ public class EnemyController : MonoBehaviour
 
         if (flag) agent.velocity = Vector3.zero;
         else PlaySound(idleClip);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("GameController")) onPlayer = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("GameController")) onPlayer = false;
     }
 }
