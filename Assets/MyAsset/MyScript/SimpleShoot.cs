@@ -6,7 +6,6 @@ using UnityEngine;
 public class SimpleShoot : MonoBehaviour
 {
     [Header("Prefab Refrences")]
-    public GameObject bulletPrefab;
     public GameObject casingPrefab;
     public GameObject muzzleFlashPrefab;
 
@@ -21,7 +20,7 @@ public class SimpleShoot : MonoBehaviour
     [Tooltip("Casing Ejection Speed")] [SerializeField] private float ejectPower = 150f;
     [SerializeField] float damage = 20f;
     [SerializeField] CameraShake cs;
-    [SerializeField] int maxAmmo = 30;
+    [SerializeField] int maxAmmo = 35;
     [SerializeField] int curAmmo = 15;
     [SerializeField] TMP_Text ammoText;
 
@@ -84,9 +83,6 @@ public class SimpleShoot : MonoBehaviour
         }
         StartCoroutine(cs.Shake(0.1f, 0.2f)); // 총기 반동
 
-        if (!bulletPrefab)
-        { return; }
-
         PlaySound(shotClip);
 
         TwoStepRayCast();
@@ -124,10 +120,6 @@ public class SimpleShoot : MonoBehaviour
                 hit.transform.gameObject.GetComponent<EnemyController>().OnDamaged(damage);
         }
 
-        GameObject tempCasing = Instantiate(bulletPrefab, barrelLocation.position, barrelLocation.rotation);
-
-        tempCasing.GetComponent<Rigidbody>().AddForce(attackDirection * shotPower);
-        Destroy(tempCasing, destroyTimer);
     }
 
     IEnumerator OnMuzzleEffect()
@@ -164,6 +156,7 @@ public class SimpleShoot : MonoBehaviour
     {
         curAmmo += 7;
         curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        Debug.Log(curAmmo);
         ammoText.text = curAmmo.ToString();
     }
 }

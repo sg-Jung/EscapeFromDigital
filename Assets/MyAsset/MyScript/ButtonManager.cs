@@ -7,9 +7,24 @@ public class ButtonManager : MonoBehaviour
 {
     public GameObject desc;
 
+    private void Awake()
+    {
+        Screen.SetResolution(1920, 1080, true);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            ClickDescBtn();
+        }
+    }
+
     public void ClickStartBtn()
     {
+        if (Time.timeScale != 1) Time.timeScale = 1f;
         SceneManager.LoadScene(1);
+        Destroy(QuestController.Instance);
     }
 
     public void ClickDescBtn()
@@ -25,11 +40,15 @@ public class ButtonManager : MonoBehaviour
 
     public void RestartBtn()
     {
+        if (Time.timeScale != 1) Time.timeScale = 1f;
         SceneManager.LoadScene(1);
+        Destroy(QuestController.Instance);
     }
 
     public void MainBtn()
     {
+        if (Time.timeScale != 1) Time.timeScale = 1f;
         SceneManager.LoadScene(0);
+        Destroy(QuestController.Instance);
     }
 }

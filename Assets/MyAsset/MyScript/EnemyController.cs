@@ -31,16 +31,34 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         cc = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
-
+        
     }
+
+    private void Update()
+    {
+        if (QuestController.Instance.gameEnd)
+        {
+            GameEnd();
+        }
+
+        if(isAttack)
+            RotateToPlayer();
+    }
+
 
     void FixedUpdate()
     {
+        
         if (!isStop && !isDie && enemyHP > 0)
         {
             agent.destination = target.transform.position;
             OnHitPlayer();
         }
+    }
+
+    void GameEnd()
+    {
+        Destroy(this.gameObject);
     }
 
 
@@ -68,6 +86,7 @@ public class EnemyController : MonoBehaviour
         {
             anim.SetBool("isDie", true);
             isDie = true;
+            cc.enabled = false;
             StartCoroutine(nameof(OnDieCor));
         }
     }

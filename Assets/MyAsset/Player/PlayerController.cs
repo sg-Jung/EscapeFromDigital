@@ -68,7 +68,14 @@ namespace EvolveGames
         [HideInInspector] public bool isEnemyInTrigger = false;
         [Header("Hit")]
         public Image bloodImg;
+        public Image hurtImg;
+        bool isHpWarning = false;
+        bool isDie = false;
+        bool enterWarning = false;
         [SerializeField] CameraShake cs;
+        [SerializeField] QuestController qc;
+        [SerializeField] AudioClip dieClip;
+        AudioSource audioSource;
         public bool isSlaveSafe = false;
 
 
@@ -76,6 +83,8 @@ namespace EvolveGames
         {
             characterController = GetComponent<CharacterController>();
             cam = GetComponentInChildren<Camera>();
+            audioSource = GetComponent<AudioSource>();
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             InstallCroughHeight = characterController.height;
@@ -88,6 +97,11 @@ namespace EvolveGames
 
         void Update()
         {
+            if (QuestController.Instance.gameEnd)
+            {
+                return;
+            }
+
             RaycastHit CroughCheck;
             RaycastHit ObjectCheck;
 
@@ -153,11 +167,58 @@ namespace EvolveGames
             {
                 WallDistance = Physics.Raycast(GetComponentInChildren<Camera>().transform.position, transform.TransformDirection(Vector3.forward), out ObjectCheck, HideDistance, LayerMaskInt);
             }
+
+        }
+
+        IEnumerator HpWarning()
+        {
+            hurtImg.gameObject.SetActive(true);
+            enterWarning = true;
+
+            while (true)
+            {
+                hurtImg.gameObject.SetActive(true);
+                yield return new WaitForSeconds(1f);
+                hurtImg.gameObject.SetActive(false);
+                yield return new WaitForSeconds(1f);
+
+                if (isDie)
+                {
+                    PlayerDie();
+                    break;
+                }
+                yield return null;
+            }
+        }
+
+        void PlayerDie()
+        {
+            qc.endText.GetComponent<Text>().text = "Game Over";
+            qc.GameEnd();
         }
 
         public void PlayerOnDamaged(float damage)
         {
             hp -= damage;
+
+            if (hp <= 30 && !enterWarning)
+            {
+                isHpWarning = true;
+                StartCoroutine(nameof(HpWarning));
+            }
+            else if(hp <= 0)
+            {
+                if (!isDie)
+                {
+                    audioSource.clip = dieClip;
+                    audioSource.loop = false;
+                    audioSource.Stop();
+                    audioSource.Play();
+                }
+                isDie = true;
+                Debug.Log("IsDie");
+            }
+
             StartCoroutine(cs.Shake(0.1f, 0.5f));
             StartCoroutine(nameof(HitImgCor));
         }

@@ -13,6 +13,7 @@ public class SlaveOutline : MonoBehaviour
         {
             foreach (Outline s in outlines)
             {
+                s.gameObject.SetActive(true);
                 s.eraseRenderer = false;
             }
         }
@@ -25,6 +26,7 @@ public class SlaveOutline : MonoBehaviour
             foreach (Outline s in outlines)
             {
                 s.eraseRenderer = true;
+                s.gameObject.SetActive(false);
             }
         }
     }

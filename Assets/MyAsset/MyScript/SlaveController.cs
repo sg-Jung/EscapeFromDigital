@@ -14,6 +14,7 @@ public class SlaveController : MonoBehaviour
     [SerializeField] PlayerController pc;
     [SerializeField] bool onPlayer = false;
     public GameObject portal;
+    public GameObject pressFImg;
     public Text mission;
     bool playerSaveHer = false;
     bool isStop = false;
@@ -32,6 +33,8 @@ public class SlaveController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.F))
             {
                 mission.text = "출구를 찾아 탈출하라";
+
+                if (pressFImg.activeSelf) pressFImg.SetActive(false);
 
                 playerSaveHer = true;
                 pc.isSlaveSafe = true;
@@ -70,16 +73,20 @@ public class SlaveController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("GameController")) onPlayer = true;
+        if (other.CompareTag("GameController") && !playerSaveHer)
+        {
+            pressFImg.SetActive(true);
+            onPlayer = true;
+        }
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        
-    }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("GameController")) onPlayer = false;
+        if (other.CompareTag("GameController") && !playerSaveHer)
+        {
+            onPlayer = false;
+            pressFImg.SetActive(false);
+        }
     }
 }

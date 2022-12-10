@@ -42,7 +42,7 @@ PlayerSettings:
   m_SplashScreenLogos:
   - logo: {fileID: 10404, guid: 0000000000000000e000000000000000, type: 0}
     duration: 2
-  - logo: {fileID: 21300000, guid: 97aa387a57998c64898a6cbfa77cf6a2, type: 3}
+  - logo: {fileID: 21300000, guid: 809f0067d4d3dba4595b26969b59216a, type: 3}
     duration: 3
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
@@ -159,7 +159,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.DefaultCompany.FPS-Controller
+    Standalone: com.DefaultCompany.MM-Project
   buildNumber:
     Standalone: 0
     iPhone: 0
@@ -277,7 +277,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 545417806cac07f459207e473a5b45df, type: 3}
+      m_Icon: {fileID: 2800000, guid: 493e3d4c4724c804f8bbebe749c9ff77, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
