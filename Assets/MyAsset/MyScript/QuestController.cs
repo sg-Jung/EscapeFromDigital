@@ -39,7 +39,6 @@ public class QuestController : MonoBehaviour
         }
 
         player = GameObject.FindGameObjectWithTag("GameController");
-        Debug.Log(player.name);
     }
 
     private void Update()
@@ -90,6 +89,7 @@ public class QuestController : MonoBehaviour
     {
         gameEnd = true;
 
+        player.GetComponent<AudioSource>().Stop();
         mainUI.SetActive(false);
         StartCoroutine(nameof(FadeIn));
         Invoke(nameof(StartFadeOut), 2f);
