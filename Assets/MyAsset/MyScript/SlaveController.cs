@@ -32,6 +32,7 @@ public class SlaveController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
+                mission.color = Color.yellow;
                 mission.text = "출구를 찾아 탈출하라";
 
                 if (pressFImg.activeSelf) pressFImg.SetActive(false);
